@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using LSPD_First_Response.Mod.API;
-using Rage;
 
 namespace RoutineCallouts
 {
@@ -8,20 +7,19 @@ namespace RoutineCallouts
 	{
 		public override void Initialize()
 		{
-			Functions.OnOnDutyStateChanged += OnOnDutyStateChangedHandler;
-			AppDomain.CurrentDomain.AssemblyResolve += LSPDFRResolveEventHandler;
+			Functions.OnOnDutyStateChanged += OnDutyChangedHandler;
+			AppDomain.CurrentDomain.AssemblyResolve += ResolveEventHandler;
 
 			Logger.Log("Initialized");
 		}
 
-		private void OnOnDutyStateChangedHandler(bool onDuty)
+		private void OnDutyChangedHandler(bool onDuty)
 		{
 			Logger.Log("OnDuty state has changed to " + onDuty);
-			if (onDuty)
-			{
-				RegisterCallouts();
-				Logger.Log("Callouts registered");
-			}
+			if (!onDuty) return;
+			
+			RegisterCallouts();
+			Logger.Log("Callouts registered");
 		}
 
 		public override void Finally()
@@ -35,7 +33,7 @@ namespace RoutineCallouts
 			Logger.Log("Registered HighSpeedChase");
 		}
 
-		public static Assembly? LSPDFRResolveEventHandler(object? sender, ResolveEventArgs args)
+		private static Assembly? ResolveEventHandler(object? sender, ResolveEventArgs args)
 		{
 			foreach (Assembly assembly in Functions.GetAllUserPlugins())
 			{
@@ -51,14 +49,14 @@ namespace RoutineCallouts
 			return null;
 		}
 
-		public static bool IsRoutineCalloutsRunning(string Plugin, Version? minVersion = null)
+		public static bool IsRoutineCalloutsRunning(string plugin, Version? minVersion = null)
 		{
 			foreach (Assembly assembly in Functions.GetAllUserPlugins())
 			{
 				AssemblyName assemblyName = assembly.GetName();
 
 				if (assemblyName.Name != null &&
-					string.Equals(assemblyName.Name, Plugin, StringComparison.OrdinalIgnoreCase))
+					string.Equals(assemblyName.Name, plugin, StringComparison.OrdinalIgnoreCase))
 				{
 					if (minVersion == null || (assemblyName.Version != null && assemblyName.Version.CompareTo(minVersion) >= 0))
 					{

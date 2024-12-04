@@ -8,7 +8,7 @@ namespace RoutineCallouts
 
 		public static void Log(string message)
 		{
-			Game.LogTrivial(Prefix + message);
+			Game.LogTrivial($"{Prefix}{message}");
 		}
 	}
 }

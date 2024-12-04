@@ -7,50 +7,50 @@ namespace RoutineCallouts.Callouts
 	[CalloutInfo("HighSpeedChase", CalloutProbability.Medium)]
 	public class HighSpeedChase : Callout
 	{
-		private Ped? Suspect;
-		private Vehicle? SuspectVehicle;
-		private Blip? SuspectBlip;
-		private LHandle? Pursuit;
-		private Vector3 SpawnPoint;
-		private bool PursuitCreated = false;
+		private Ped? _suspect;
+		private Vehicle? _suspectVehicle;
+		private Blip? _suspectBlip;
+		private LHandle? _pursuit;
+		private Vector3 _spawnPoint;
+		private bool _pursuitCreated = false;
 
 		public override bool OnBeforeCalloutDisplayed()
 		{
-			SpawnPoint = World.GetNextPositionOnStreet(Game.LocalPlayer.Character.Position.Around(500f));
-			ShowCalloutAreaBlipBeforeAccepting(SpawnPoint, 30f);
-			AddMinimumDistanceCheck(100f, SpawnPoint);
+			_spawnPoint = World.GetNextPositionOnStreet(Game.LocalPlayer.Character.Position.Around(500f));
+			ShowCalloutAreaBlipBeforeAccepting(_spawnPoint, 30f);
+			AddMinimumDistanceCheck(100f, _spawnPoint);
 			CalloutMessage = "High Speed Chase";
-			CalloutPosition = SpawnPoint;
-			Functions.PlayScannerAudioUsingPosition("WE_HAVE CRIME_SUSPECT_RESISTING_ARREST_01 IN_OR_ON_POSITION", SpawnPoint);
+			CalloutPosition = _spawnPoint;
+			Functions.PlayScannerAudioUsingPosition("WE_HAVE CRIME_SUSPECT_RESISTING_ARREST_01 IN_OR_ON_POSITION", _spawnPoint);
 
 			return base.OnBeforeCalloutDisplayed();
 		}
 
 		public override bool OnCalloutAccepted()
 		{
-			SuspectVehicle = new Vehicle("BANSHEE", SpawnPoint);
-			if (!SuspectVehicle.Exists())
+			_suspectVehicle = new Vehicle("BANSHEE", _spawnPoint);
+			if (!_suspectVehicle.Exists())
 			{
 				End();
 				return false;
 			}
-			SuspectVehicle.IsPersistent = true;
+			_suspectVehicle.IsPersistent = true;
 
-			Suspect = SuspectVehicle.CreateRandomDriver();
-			if (!Suspect.Exists())
+			_suspect = _suspectVehicle.CreateRandomDriver();
+			if (!_suspect.Exists())
 			{
 				End();
 				return false;
 			}
-			Suspect.IsPersistent = true;
-			Suspect.BlockPermanentEvents = true;
+			_suspect.IsPersistent = true;
+			_suspect.BlockPermanentEvents = true;
 
-			SuspectBlip = Suspect.AttachBlip();
-			SuspectBlip.IsFriendly = false;
-			SuspectBlip.Color = System.Drawing.Color.Red;
-			SuspectBlip.IsRouteEnabled = true;
+			_suspectBlip = _suspect.AttachBlip();
+			_suspectBlip.IsFriendly = false;
+			_suspectBlip.Color = System.Drawing.Color.Red;
+			_suspectBlip.IsRouteEnabled = true;
 
-			PursuitCreated = false;
+			_pursuitCreated = false;
 
 			return base.OnCalloutAccepted();
 		}
@@ -59,21 +59,21 @@ namespace RoutineCallouts.Callouts
 		{
 			base.Process();
 
-			if (Suspect == null || SuspectVehicle == null || !Suspect.Exists() || !SuspectVehicle.Exists() || Suspect.IsDead || Functions.IsPedArrested(Suspect))
+			if (_suspect == null || _suspectVehicle == null || !_suspect.Exists() || !_suspectVehicle.Exists() || _suspect.IsDead || Functions.IsPedArrested(_suspect))
 			{
 				End();
 				return;
 			}
 
-			if (!PursuitCreated && Game.LocalPlayer.Character.DistanceTo(Suspect) < 100f)
+			if (!_pursuitCreated && Game.LocalPlayer.Character.DistanceTo(_suspect) < 100f)
 			{
-				Pursuit = Functions.CreatePursuit();
-				Functions.AddPedToPursuit(Pursuit, Suspect);
-				Functions.SetPursuitIsActiveForPlayer(Pursuit, true);
-				PursuitCreated = true;
+				_pursuit = Functions.CreatePursuit();
+				Functions.AddPedToPursuit(_pursuit, _suspect);
+				Functions.SetPursuitIsActiveForPlayer(_pursuit, true);
+				_pursuitCreated = true;
 			}
 
-			if (PursuitCreated && !Functions.IsPursuitStillRunning(Pursuit))
+			if (_pursuitCreated && !Functions.IsPursuitStillRunning(_pursuit))
 			{
 				End();
 			}
@@ -81,9 +81,9 @@ namespace RoutineCallouts.Callouts
 
 		public override void End()
 		{
-			if (SuspectBlip != null && SuspectBlip.Exists()) SuspectBlip.Delete();
-			if (Suspect != null && Suspect.Exists()) Suspect.Dismiss();
-			if (SuspectVehicle != null && SuspectVehicle.Exists()) SuspectVehicle.Dismiss();
+			if (_suspectBlip != null && _suspectBlip.Exists()) _suspectBlip.Delete();
+			if (_suspect != null && _suspect.Exists()) _suspect.Dismiss();
+			if (_suspectVehicle != null && _suspectVehicle.Exists()) _suspectVehicle.Dismiss();
 
 			base.End();
 		}
