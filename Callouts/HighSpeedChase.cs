@@ -21,7 +21,7 @@ namespace RoutineCallouts.Callouts
 			AddMinimumDistanceCheck(100f, _spawnPoint);
 			CalloutMessage = "High Speed Chase";
 			CalloutPosition = _spawnPoint;
-			Functions.PlayScannerAudioUsingPosition("WE_HAVE CRIME_SUSPECT_RESISTING_ARREST_01 IN_OR_ON_POSITION", _spawnPoint);
+			Functions.PlayScannerAudioUsingPosition("CITIZENS_REPORT CRIME_SUSPECT_ON_THE_RUN IN_OR_ON_POSITION", _spawnPoint);
 
 			return base.OnBeforeCalloutDisplayed();
 		}
