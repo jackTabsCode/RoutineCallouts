@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using LSPD_First_Response.Mod.API;
 
 namespace RoutineCallouts
@@ -17,7 +18,7 @@ namespace RoutineCallouts
 		{
 			Logger.Log("OnDuty state has changed to " + onDuty);
 			if (!onDuty) return;
-			
+
 			RegisterCallouts();
 			Logger.Log("Callouts registered");
 		}
@@ -33,14 +34,14 @@ namespace RoutineCallouts
 			Logger.Log("Registered HighSpeedChase");
 		}
 
-		private static Assembly? ResolveEventHandler(object? sender, ResolveEventArgs args)
+		private static Assembly ResolveEventHandler(object sender, ResolveEventArgs args)
 		{
 			foreach (Assembly assembly in Functions.GetAllUserPlugins())
 			{
 				AssemblyName assemblyName = assembly.GetName();
 
 				if (args.Name != null && assemblyName.Name != null &&
-					args.Name.Contains(assemblyName.Name, StringComparison.OrdinalIgnoreCase))
+					args.Name.ToLower().Contains(assemblyName.Name.ToLower()))
 				{
 					return assembly;
 				}
@@ -49,7 +50,7 @@ namespace RoutineCallouts
 			return null;
 		}
 
-		public static bool IsRoutineCalloutsRunning(string plugin, Version? minVersion = null)
+		public static bool IsRoutineCalloutsRunning(string plugin, Version minVersion = null)
 		{
 			foreach (Assembly assembly in Functions.GetAllUserPlugins())
 			{

@@ -7,10 +7,10 @@ namespace RoutineCallouts.Callouts
 	[CalloutInfo("HighSpeedChase", CalloutProbability.Medium)]
 	public class HighSpeedChase : Callout
 	{
-		private Ped? _suspect;
-		private Vehicle? _suspectVehicle;
-		private Blip? _suspectBlip;
-		private LHandle? _pursuit;
+		private Ped _suspect;
+		private Vehicle _suspectVehicle;
+		private Blip _suspectBlip;
+		private LHandle _pursuit;
 		private Vector3 _spawnPoint;
 		private bool _pursuitCreated = false;
 
