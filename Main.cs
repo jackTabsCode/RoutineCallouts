@@ -16,11 +16,9 @@ namespace RoutineCallouts
 
 		private void OnDutyChangedHandler(bool onDuty)
 		{
-			Logger.Log("OnDuty state has changed to " + onDuty);
 			if (!onDuty) return;
 
 			RegisterCallouts();
-			Logger.Log("Callouts registered");
 		}
 
 		public override void Finally()
@@ -31,7 +29,6 @@ namespace RoutineCallouts
 		private static void RegisterCallouts()
 		{
 			Functions.RegisterCallout(typeof(Callouts.HighSpeedChase));
-			Logger.Log("Registered HighSpeedChase");
 		}
 
 		private static Assembly ResolveEventHandler(object sender, ResolveEventArgs args)
